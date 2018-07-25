@@ -20,8 +20,8 @@ KEY = "9594603-1ab4b7442c4491ab852ebd1ee"
 URL = "https://pixabay.com/api/?key="
 
 # Image Generator Helper Functions
-def prep_query_string(q="", category="", image_type="all"):
-    queries = {"&q=": q.replace(" ","+"), "&category=": category.replace(" ", "+"), "&image_type=": image_type.replace(" ", "+")}
+def prep_query_string(q="", category="", image_type="all", per_page=40):
+    queries = {"&q=": q.replace(" ","+"), "&category=": category.replace(" ", "+"), "&image_type=": image_type.replace(" ", "+"), "&per_page=": str(per_page)}
     return queries
 
 def pull_images(q="",category="",image_type="all"):
@@ -40,6 +40,14 @@ def resize_logo(logo, basewidth):
     logo = logo.resize((basewidth, logo_hsize), Image.ANTIALIAS)
     return logo
 
+def get_boxes(image_w, image_h, logo_w, logo_h):
+    top_right = (image_w - (image_w // 3), image_h // 10)
+    top_left = (image_w // 10, image_h // 10)
+    bottom_right = (image_w - (image_w // 3), image_h - (image_h // 8))
+    bottom_left = (image_w // 10, image_h - (image_h // 8))
+    center = ((image_w // 2) - (logo_w // 2), (image_h // 2) - (logo_h // 2))
+    return top_right, top_left, bottom_right, bottom_left, center
+
 def create_image(image, logo_path):
     # Reading image and logo first
     image = Image.open(image)
@@ -52,9 +60,9 @@ def create_image(image, logo_path):
     # Targeting image area
     box = (image_w - (image_w // 3), image_h // 10)
     # Creating mask to paste without weird background
-    logo_mask = logo.convert("L")
+    logo_mask = logo.convert("RGBA")
     # Pasting
-    image.paste(logo, box, logo)
+    image.paste(logo, box, logo_mask)
     return image
 
 
@@ -71,3 +79,18 @@ def generate_image(search_term="", category="", image_type="all", logo_path='../
     plt.imshow(final)
     final.save('image_test.jpg')
     return final
+
+# Generate Multiple Images
+def generate_images(search_term="", category="", image_type="all", logo_path="./test_logo.png", num_images=10):
+    #Loading json results
+    images_json = pull_images(search_term, category, image_type, num_images)
+    
+    # Creating list of randomly chosen images
+    rand_images = []
+    while len(rand_images) != num_images:
+        rand_image = random.choice(images_json['hits'])
+        rand_image = urllib.request.urlopen(rand_image['largeImageURL'])
+        rand_image = Image.open(rand_image)
+        rand_images.append(rand_image)
+    
+    return rand_images      
