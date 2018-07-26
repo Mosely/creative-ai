@@ -47,10 +47,6 @@ class RNN(nn.Module):
     def forward(self, input, hidden):
         input = self.encoder(input.view(1, -1))
         output, hidden = self.gru(input.view(1, 1, -1), hidden)
-        output, hidden = self.gru(input.view(1, 1, -1), hidden)
-        output, hidden = self.gru(input.view(1, 1, -1), hidden)
-        output, hidden = self.gru(input.view(1, 1, -1), hidden)
-        output, hidden = self.gru(input.view(1, 1, -1), hidden)
         output = self.decoder(output.view(1, -1))
         return output, hidden
 
@@ -61,11 +57,11 @@ class RNN(nn.Module):
 
 # Importing Trained Model:
 
-hidden_size = 100
-n_layers = 1
+hidden_size = 512
+n_layers = 6
 
 decoder = RNN(n_characters, hidden_size, n_characters, n_layers)
-decoder.load_state_dict(torch.load('./rnn.py'))
+decoder.load_state_dict(torch.load('./rnn_2.py', map_location='cpu'))
 
 
 # __________________________________________________________

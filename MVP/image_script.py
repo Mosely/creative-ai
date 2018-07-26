@@ -24,9 +24,9 @@ def prep_query_string(q="", category="", image_type="all", per_page=40):
     queries = {"&q=": q.replace(" ","+"), "&category=": category.replace(" ", "+"), "&image_type=": image_type.replace(" ", "+"), "&per_page=": str(per_page)}
     return queries
 
-def pull_images(q="",category="",image_type="all"):
+def pull_images(q="",category="",image_type="all", per_page=40):
     api_call = URL + KEY
-    queries = prep_query_string(q, category, image_type)
+    queries = prep_query_string(q, category, image_type, per_page)
     for query in queries:
         api_call += (query + queries[query])
         print(api_call)
@@ -83,7 +83,7 @@ def generate_image(search_term="", category="", image_type="all", logo_path='../
 # Generate Multiple Images
 def generate_images(search_term="", category="", image_type="all", logo_path="./test_logo.png", num_images=10):
     #Loading json results
-    images_json = pull_images(search_term, category, image_type, num_images)
+    images_json = pull_images(search_term, category, image_type)
     
     # Creating list of randomly chosen images
     rand_images = []
