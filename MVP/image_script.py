@@ -5,6 +5,7 @@ import urllib.request
 import requests
 import random
 import json
+import os
 
 # PIL Loader Issue Workaround
 def register_extension(id, extension): Image.EXTENSION[extension.lower()] = id.upper()
@@ -15,7 +16,7 @@ Image.register_extensions = register_extensions
 
 
 # API Key and URL
-KEY = "9594603-1ab4b7442c4491ab852ebd1ee"
+KEY = os.environ['PIXABAY_KEY']
 
 URL = "https://pixabay.com/api/?key="
 
@@ -89,8 +90,9 @@ def generate_images(search_term="", category="", image_type="all", logo_path="./
     rand_images = []
     while len(rand_images) != num_images:
         rand_image = random.choice(images_json['hits'])
+        image_url = rand_image['largeImageURL']
         rand_image = urllib.request.urlopen(rand_image['largeImageURL'])
         rand_image = Image.open(rand_image)
-        rand_images.append(rand_image)
+        rand_images.append({'image': rand_image, 'url': image_url})
     
     return rand_images      
