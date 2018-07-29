@@ -6,7 +6,7 @@ import image_script as imscript
 
 from watson_developer_cloud import NaturalLanguageUnderstandingV1
 from watson_developer_cloud.natural_language_understanding_v1 \
-  import Features, EntitiesOptions, KeywordsOptions
+  import Features, EmotionOptions, EntitiesOptions, KeywordsOptions
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -92,12 +92,17 @@ def generate_mockups(description='', num_samples=10, predict_len=20, temperature
 # Analyze Image Caption with NLU
 def analyze(image_data):
     image_caption = subprocess.check_output('python captioner.py --image=' + image_data['url'], shell=True)
+    # Cleaning Image Caption response:
     text = str(image_caption)
+    text = text.split('>')[1]
+    text = text.split('<')[0]
+    print(text)
     response = natural_language_understanding.analyze(
       text=text,
       features=Features(
+        emotion=EmotionOptions(),
         keywords=KeywordsOptions(
           emotion=True,
           sentiment=True,
-          limit=2)))
+          limit=10)))
     return response
