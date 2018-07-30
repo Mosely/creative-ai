@@ -85,7 +85,8 @@ def generate_mockups(description='', num_samples=10, predict_len=20, temperature
 
         # Now Pasting new_logo and slogan
         image.paste(new_logo, logo_box, logo_mask)
-        image.paste(slogan, slogan_box, slogan)
+        # Testing now without slogan (why it is commented out)
+        # image.paste(slogan, slogan_box, slogan)
     # Returning list of final mockups w/ URL
     return main_images
 
@@ -97,6 +98,9 @@ def analyze(image_data):
     text = text.split('>')[1]
     text = text.split('<')[0]
     print(text)
+    # Adding Image Caption to Image Data
+    image_data['caption'] = text
+    # Calling NLU Analysis 
     response = natural_language_understanding.analyze(
       text=text,
       features=Features(
@@ -105,4 +109,6 @@ def analyze(image_data):
           emotion=True,
           sentiment=True,
           limit=10)))
-    return response
+    # Adding Emotion to Image Data
+    image_data['emotion'] = response['emotion']['document']['emotion']
+    return image_data

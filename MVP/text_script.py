@@ -114,9 +114,11 @@ def get_candidates(num_candidates=10, predict_len=10, temperature=0.8):
         sentiment_evaluations += 1
 
         # Finalizing candidate if it has a strong enough score
-        if sentiment['probability']['pos'] > 0.60:
-            print(sentiment['probability'])
-            candidates.append(sample)
+        # Commenting this out for now (testing)
+        # if sentiment['probability']['pos'] > 0.60:
+        #     print(sentiment['probability'])
+        #     candidates.append(sample)
+        candidates.append(sample)
 
         # Stop early if calculate too many evaluations (request limit)
         if sentiment_evaluations >= 2000:
